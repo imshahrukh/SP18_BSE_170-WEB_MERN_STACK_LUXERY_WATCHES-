@@ -1,14 +1,15 @@
 /* eslint-disable react/style-prop-object */
 import React, { useState } from "react";
 import Card from "./components/Card";
+import { getData_GET } from "./call";
 // import axios from "axios";
-// import img from "./../img/no.jpg";
+// import img from "assests/img/no.jpg";
 
 const SearchPage = (props) => {
   const [search, setSearch] = useState(0);
   const [city, setCity] = useState("");
   const [searchItem, setSearchItem] = useState("");
-  // let [data, setData] = useState([]);
+  let [data, setData] = useState([]);
 
   // const getData = async (url, sub_Data) => {
   //   let res = await axios.post(url, sub_Data);
@@ -20,13 +21,15 @@ const SearchPage = (props) => {
   let getSearchedData = async (event) => {
     event.preventDefault();
     const data = {
-      skills: [searchItem],
-      city: city,
+      // tags: [searchItem],
+      brand: city,
+      name: searchItem,
     };
-    // const url = "http://localhost:8000/v1/search";
-    // const newData = await getData(url, data);
-    // console.log(data);
-    // setData(newData.data.provider);
+    console.log(data);
+    const url = "http://localhost:8000/v1/watch/search";
+    const newData = await getData_GET(url, data);
+    console.log(newData.data.watch);
+    setData(newData.data.watch);
   };
   // // api call to get the search items
   const changeCity = (vl) => {
@@ -73,10 +76,10 @@ const SearchPage = (props) => {
             onChange={(event) => changeCity(event.target.value)}
           >
             <option value=""></option>
-            <option value="Islamabad">Islamabad</option>
-            <option value="Karachi">Karachi</option>
-            <option value="Lahore">Lahore</option>
-            <option value="Rawalpindi">Rawalpindi</option>
+            <option value="brand1">brand1</option>
+            <option value="brand2">brand2</option>
+            <option value="brand3">brand3</option>
+            {/* <option value="Rawalpindi">Rawalpindi</option> */}
           </select>
 
           <button
@@ -85,6 +88,10 @@ const SearchPage = (props) => {
               setSearch(1);
             }}
             className="searchbtn"
+            style={{
+              height: "60px",
+              width: "60px",
+            }}
           >
             <i className="fas fa-search"></i>
           </button>
@@ -92,8 +99,8 @@ const SearchPage = (props) => {
       </div>
 
       <div className="tests">
-        <div className="member-cards hide-member-cards">
-          {/* {data.length === 0 ? (
+        <div class="gallery-watch">
+          {data.length === 0 ? (
             <div
               style={{
                 width: "100%",
@@ -108,20 +115,22 @@ const SearchPage = (props) => {
                   width: "auto",
                   height: "100%",
                 }}
-                src={img}
+                src={"assests/img/no.jpg"}
                 alt="test"
               ></img>
             </div>
           ) : (
-            data.map((item, index) => <MemberCard key={index} item={item} />)
-          )} */}
-
+            data.map((item, index) => (
+              <Card number={index} key={index} item={item} />
+            ))
+          )}
+          {/* 
           <Card />
           <Card />
           <Card />
           <Card />
           <Card />
-          <Card />
+          <Card /> */}
         </div>
       </div>
     </div>

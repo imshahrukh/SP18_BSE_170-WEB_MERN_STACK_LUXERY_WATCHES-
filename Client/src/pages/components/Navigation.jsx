@@ -1,8 +1,9 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from "react";
 import { useNavigate } from "react-router-dom";
-
-function Navigation(props) {
+import { useEffect, useState } from "react";
+import { readOnlyData } from "./../call";
+function Navigation({ showCart, cart, size }) {
   const navigate = useNavigate();
 
   return (
@@ -75,6 +76,30 @@ function Navigation(props) {
                 class="nav-link"
               >
                 Contact
+              </a>
+            </li>
+            <li class="nav-item">
+              <a
+                onClick={() => {
+                  if (cart === 0) {
+                    showCart(1);
+                  } else {
+                    showCart(0);
+                  }
+                }}
+                class="nav-link par"
+              >
+                <div class="cartNumber">{size}</div> Cart
+              </a>
+            </li>
+            <li class="nav-item">
+              <a
+                onClick={() => {
+                  navigate("/login");
+                }}
+                class="nav-link"
+              >
+                Login
               </a>
             </li>
           </ul>

@@ -1,13 +1,41 @@
 /* eslint-disable react/style-prop-object */
 /* eslint-disable jsx-a11y/img-redundant-alt */
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Nav from "./components/Navigation";
+import Cart from "./components/Cart";
+import { getData_GET } from "./call";
+import PopularCard from "./components/PopularCard";
+import FeatureProducts from "./components/FeatureProducts";
+import { readOnlyData } from "./call";
+// import { useState } from "react";
 
 function Home(props) {
+  const [cart, setCart] = useState(0);
+  const [watches, setWatches] = useState([]);
+  let [size, setSize] = useState(0);
+
+  const getWatchesData = async () => {
+    let data = await getData_GET("http://localhost:8000/v1/watch");
+    data = data.data.watch;
+    data = data.slice(0, 4);
+    setWatches(data);
+  };
+  const fetchcartData = async () => {
+    const url = "http://localhost:8000/v1/cart/1";
+
+    const data = await readOnlyData(url);
+    setSize(data.size);
+  };
+
+  useEffect(() => {
+    getWatchesData();
+    fetchcartData();
+  }, []);
   return (
     <div>
-      <Nav />
+      {cart === 1 ? <Cart /> : null}
+      <Nav showCart={setCart} size={size} cart={cart} />
       {/* <!-- END nav --> */}
       <div class="hero">
         {/* <!-- <div class="container-wrap d-flex justify-content-end align-items-end">
@@ -69,7 +97,6 @@ function Home(props) {
           </div>
         </section>
       </div>
-
       <section id="popular" class="ftco-section">
         <div class="container">
           <div class="row justify-content-center mb-5 pb-3">
@@ -91,7 +118,9 @@ function Home(props) {
                   </div>
                 </div>
                 <div class="media-body">
-                  <h3 class="heading mb-3 text-uppercase">citizen</h3>
+                  <h3 class="heading mb-3 text-uppercase">
+                    {watches.length === 0 ? "" : watches[0].name}
+                  </h3>
                   <a
                     href=""
                     data-toggle="modal"
@@ -114,7 +143,9 @@ function Home(props) {
                   </div>
                 </div>
                 <div class="media-body">
-                  <h3 class="heading mb-3 text-uppercase">hamilton</h3>
+                  <h3 class="heading mb-3 text-uppercase">
+                    {watches.length === 0 ? "" : watches[1].name}
+                  </h3>
                   <a
                     href=""
                     data-toggle="modal"
@@ -137,7 +168,9 @@ function Home(props) {
                   </div>
                 </div>
                 <div class="media-body">
-                  <h3 class="heading mb-3 text-uppercase">omega</h3>
+                  <h3 class="heading mb-3 text-uppercase">
+                    {watches.length === 0 ? "" : watches[2].name}
+                  </h3>
                   <a
                     href=""
                     data-toggle="modal"
@@ -160,7 +193,9 @@ function Home(props) {
                   </div>
                 </div>
                 <div class="media-body">
-                  <h3 class="heading mb-3 text-uppercase">tissot</h3>
+                  <h3 class="heading mb-3 text-uppercase">
+                    {watches.length === 0 ? "" : watches[3].name}
+                  </h3>
                   <a
                     href=""
                     data-toggle="modal"
@@ -174,6 +209,7 @@ function Home(props) {
           </div>
         </div>
       </section>
+      {/* COLLECTION START */}
 
       {/* <!--COllection Modal 1 --> */}
       <div
@@ -184,67 +220,12 @@ function Home(props) {
         aria-labelledby="modalboxTitle"
         aria-hidden="true"
       >
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <img
-                class="popup-image"
-                src="assests/img/popular1.png"
-                alt="popup-image"
-              />
-              <div class=" modal-title" id="modalboxTitle">
-                <div class="popup-image-text">
-                  <div class="modal-menu-price">$22</div>
-                </div>
-              </div>
-              <button
-                type="button"
-                class=" close-button"
-                data-dismiss="modal"
-                aria-label="Close"
-              >
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-              <p class="text-muted">450g</p>
-              <hr />
-              <p class="modal-category-text font-weight-bold">
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nemo
-                repellat debitis ipsam nostrum, magni et?
-              </p>
-              <hr />
-              <i class="fas fa-pepper-hot d-inline-block text-muted"></i>
-              <h1 class="modal-spicy text-uppercase d-inline-block font-weight-bold">
-                reviews
-              </h1>
-              <div class="spicy-level mb-3">
-                <div class="level text-center font-weight-bold">4/5</div>
-              </div>
-              <i class="fas fa-utensils d-inline-block text-muted"></i>
-              <h1 class="modal-nutritions text-uppercase d-inline-block font-weight-bold">
-                details
-              </h1>
-              <div class="row">
-                <div class="col">
-                  <p class="text-muted nutritions-text">
-                    Lorem, ipsum dolor sit amet consectetur adipisicing elit.
-                    Tempora, consectetur!
-                  </p>
-                </div>
-                <div class="col">
-                  <p class="text-muted nutritions-text">
-                    18kt White Gold 100%
-                    <br />
-                    Diamond 100% <br />
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        {watches.length === 0 ? (
+          ""
+        ) : (
+          <PopularCard index={0} data={watches[0]} />
+        )}
       </div>
-
       {/* <!--COllection Modal 2 --> */}
       <div
         class="modal fade modalbox"
@@ -254,67 +235,12 @@ function Home(props) {
         aria-labelledby="modalboxTitle"
         aria-hidden="true"
       >
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <img
-                class="popup-image"
-                src="assests/img/popular2.png"
-                alt="popup-image"
-              />
-              <div class="modal-title" id="modalboxTitle">
-                <div class="popup-image-text">
-                  <span class="modal-menu-price">$22</span>
-                </div>
-              </div>
-              <button
-                type="button"
-                class=" close-button"
-                data-dismiss="modal"
-                aria-label="Close"
-              >
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-              <p class="text-muted">450g</p>
-              <hr />
-              <p class="modal-category-text font-weight-bold">
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nemo
-                repellat debitis ipsam nostrum, magni et?
-              </p>
-              <hr />
-              <i class="fas fa-pepper-hot d-inline-block text-muted"></i>
-              <h1 class="modal-spicy text-uppercase d-inline-block font-weight-bold">
-                reviews
-              </h1>
-              <div class="spicy-level mb-3">
-                <div class="level text-center font-weight-bold">4/5</div>
-              </div>
-              <i class="fas fa-utensils d-inline-block text-muted"></i>
-              <h1 class="modal-nutritions text-uppercase d-inline-block font-weight-bold">
-                details
-              </h1>
-              <div class="row">
-                <div class="col">
-                  <p class="text-muted nutritions-text">
-                    Lorem, ipsum dolor sit amet consectetur adipisicing elit.
-                    Tempora, consectetur!
-                  </p>
-                </div>
-                <div class="col">
-                  <p class="text-muted nutritions-text">
-                    18kt White Gold 100%
-                    <br />
-                    Diamond 100% <br />
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        {watches.length === 0 ? (
+          ""
+        ) : (
+          <PopularCard index={1} data={watches[1]} />
+        )}
       </div>
-
       {/* <!--COllection Modal 3 --> */}
       <div
         class="modal fade modalbox"
@@ -324,67 +250,12 @@ function Home(props) {
         aria-labelledby="modalboxTitle"
         aria-hidden="true"
       >
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <img
-                class="popup-image"
-                src="assests/img/popular3.png"
-                alt="popup-image"
-              />
-              <div class="modal-title" id="modalboxTitle">
-                <div class="popup-image-text">
-                  <span class="modal-menu-price">$22</span>
-                </div>
-              </div>
-              <button
-                type="button"
-                class=" close-button"
-                data-dismiss="modal"
-                aria-label="Close"
-              >
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-              <p class="text-muted">450g</p>
-              <hr />
-              <p class="modal-category-text font-weight-bold">
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nemo
-                repellat debitis ipsam nostrum, magni et?
-              </p>
-              <hr />
-              <i class="fas fa-pepper-hot d-inline-block text-muted"></i>
-              <h1 class="modal-spicy text-uppercase d-inline-block font-weight-bold">
-                reviews
-              </h1>
-              <div class="spicy-level mb-3">
-                <div class="level text-center font-weight-bold">4/5</div>
-              </div>
-              <i class="fas fa-utensils d-inline-block text-muted"></i>
-              <h1 class="modal-nutritions text-uppercase d-inline-block font-weight-bold">
-                details
-              </h1>
-              <div class="row">
-                <div class="col">
-                  <p class="text-muted nutritions-text">
-                    Lorem, ipsum dolor sit amet consectetur adipisicing elit.
-                    Tempora, consectetur!
-                  </p>
-                </div>
-                <div class="col">
-                  <p class="text-muted nutritions-text">
-                    18kt White Gold 100%
-                    <br />
-                    Diamond 100% <br />
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        {watches.length === 0 ? (
+          ""
+        ) : (
+          <PopularCard index={2} data={watches[2]} />
+        )}
       </div>
-
       {/* <!--COllection Modal 4 --> */}
       <div
         class="modal fade modalbox"
@@ -394,232 +265,17 @@ function Home(props) {
         aria-labelledby="modalboxTitle"
         aria-hidden="true"
       >
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <img
-                class="popup-image"
-                src="assests/img/popular4.png"
-                alt="popup-image"
-              />
-              <div class="modal-title" id="modalboxTitle">
-                <div class="popup-image-text">
-                  <span class="modal-menu-price">$22</span>
-                </div>
-              </div>
-              <button
-                type="button"
-                class=" close-button"
-                data-dismiss="modal"
-                aria-label="Close"
-              >
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-              <p class="text-muted">450g</p>
-              <hr />
-              <p class="modal-category-text font-weight-bold">
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nemo
-                repellat debitis ipsam nostrum, magni et?
-              </p>
-              <hr />
-              <i class="fas fa-pepper-hot d-inline-block text-muted"></i>
-              <h1 class="modal-spicy text-uppercase d-inline-block font-weight-bold">
-                reviews
-              </h1>
-              <div class="spicy-level mb-3">
-                <div class="level text-center font-weight-bold">4/5</div>
-              </div>
-              <i class="fas fa-utensils d-inline-block text-muted"></i>
-              <h1 class="modal-nutritions text-uppercase d-inline-block font-weight-bold">
-                details
-              </h1>
-              <div class="row">
-                <div class="col">
-                  <p class="text-muted nutritions-text">
-                    Lorem, ipsum dolor sit amet consectetur adipisicing elit.
-                    Tempora, consectetur!
-                  </p>
-                </div>
-                <div class="col">
-                  <p class="text-muted nutritions-text">
-                    18kt White Gold 100%
-                    <br />
-                    Diamond 100% <br />
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        {watches.length === 0 ? (
+          ""
+        ) : (
+          <PopularCard index={3} data={watches[3]} />
+        )}
       </div>
 
-      {/* <!-- NEW ARRIVAL  --> */}
-      <section id="new-arrival" class="ftco-section bg-light ftco-room">
-        <div class="container px-0">
-          <div class="row no-gutters justify-content-center align-content-center mb-5 pb-3">
-            <div class="col-md-7 heading-section text-center ftco-animate">
-              <span class="subheading">Watch World products</span>
-              <h2 class="mb-4 text-capitalize">new arrival</h2>
-            </div>
-          </div>
-          <div class="row no-gutters">
-            <div class="col-lg-6">
-              <div class="room-wrap h-100">
-                <div
-                  class="img h-100 d-flex align-items-center"
-                  style={{
-                    backgroundImage: "url(assests/img/slider-2.jpg)",
-                    backgroundPosition: "center",
-                  }}
-                >
-                  <div class="text text-center p-4">
-                    <h2 class="font-weight-bold">
-                      {" "}
-                      <a href="index.html">Watch World </a>
-                    </h2>
-                    <p>
-                      Lorem ipsum, dolor sit amet consectetur adipisicing elit.
-                      Asperiores iure nemo, alias quod minus numquam?
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="col-lg-6">
-              <div class="room-wrap d-md-flex">
-                <div
-                  class="img"
-                  style={{ backgroundImage: "url(assests/img/new4.jpeg)" }}
-                ></div>
-                <div class="half left-arrow top-arrow d-flex align-items-center">
-                  <div class="text p-4 p-xl-5 text-center">
-                    <p class="mb-0">
-                      <span class="price mr-1">$120.00</span>
-                    </p>
-                    <h3 class="mb-3">Lorem Ipsum</h3>
-                    <p class="pt-1">
-                      <a
-                        href="product-single.html"
-                        class="btn-custom px-3 py-2"
-                      >
-                        View Details
-                        <span class="icon-long-arrow-right"></span>
-                      </a>
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-lg-6">
-              <div class="room-wrap d-md-flex">
-                <div
-                  class="img order-md-last"
-                  style={{ backgroundImage: "url(assests/img/new4.jpeg)" }}
-                ></div>
-                <div class="half right-arrow top-arrow d-flex align-items-center">
-                  <div class="text p-4 p-xl-5 text-center">
-                    <p class="mb-0">
-                      <span class="price mr-1">$120.00</span>
-                    </p>
-                    <h3 class="mb-3">Lorem Ipsum</h3>
-                    <p class="pt-1">
-                      <a
-                        href="product-single.html"
-                        class="btn-custom px-3 py-2"
-                      >
-                        View Details
-                        <span class="icon-long-arrow-right"></span>
-                      </a>
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="col-lg-6">
-              <div class="room-wrap d-md-flex">
-                <div
-                  class="img order-md-last"
-                  style={{ backgroundImage: "url(assests/img/new4.jpeg)" }}
-                ></div>
-                <div class="half right-arrow top-arrow d-flex align-items-center">
-                  <div class="text p-4 p-xl-5 text-center">
-                    <p class="mb-0">
-                      <span class="price mr-1">$130.00</span>
-                    </p>
-                    <h3 class="mb-3">Lorem Ipsum</h3>
-                    <p class="pt-1">
-                      <a
-                        href="product-single.html"
-                        class="btn-custom px-3 py-2"
-                      >
-                        View Details
-                        <span class="icon-long-arrow-right"></span>
-                      </a>
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-lg-6">
-              <div class="room-wrap d-md-flex">
-                <div
-                  class="img"
-                  style={{ backgroundImage: "url(assests/img/new4.jpeg)" }}
-                ></div>
-                <div class="half left-arrow top-arrow d-flex align-items-center">
-                  <div class="text p-4 p-xl-5 text-center">
-                    <p class="mb-0">
-                      <span class="price mr-1">$140.00</span>
-                    </p>
-                    <h3 class="mb-3">Lorem Ipsum</h3>
-                    <p class="pt-1">
-                      <a
-                        href="product-single.html"
-                        class="btn-custom px-3 py-2"
-                      >
-                        View Details
-                        <span class="icon-long-arrow-right"></span>
-                      </a>
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="col-lg-6">
-              <div class="room-wrap d-md-flex">
-                <div
-                  class="img"
-                  style={{ backgroundImage: "url(assests/img/new4.jpeg)" }}
-                ></div>
-                <div class="half left-arrow top-arrow d-flex align-items-center">
-                  <div class="text p-4 p-xl-5 text-center">
-                    <p class="mb-0">
-                      <span class="price mr-1">$120.00</span>
-                    </p>
-                    <h3 class="mb-3">Lorem Ipsum</h3>
-                    <p class="pt-1">
-                      <a
-                        href="product-single.html"
-                        class="btn-custom px-3 py-2"
-                      >
-                        View Details
-                        <span class="icon-long-arrow-right"></span>
-                      </a>
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* COLLECTION END */}
 
       {/* <!-- FEATURED PRODUCTS  --> */}
-      <section
+      {/* <section
         id="product"
         class="ftco-section ftco-menu w-100"
         style={{ backgroundImage: "url(assests/img/gallery1.jpg)" }}
@@ -633,145 +289,32 @@ function Home(props) {
           </div>
           <div class="row">
             <div class="col-md-6">
-              <div class="pricing-entry d-flex ftco-animate">
-                <div
-                  class="img order-md-last"
-                  style={{
-                    backgroundImage: "url(assests/img/gallery1.jpg)",
-                  }}
-                ></div>
-                <div class="desc pr-3 text-md-right">
-                  <div class="d-md-flex text align-items-center">
-                    <h3 class="order-md-last heading-left">
-                      <span>Pearl Neckles</span>
-                    </h3>
-                    <span class="price price-left">$20.00</span>
-                  </div>
-                  <div class="d-block desc__text">
-                    <p>
-                      Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                      Ratione, praesentium!
-                    </p>
-                  </div>
+              {watches.length === 0 ? (
+                ""
+              ) : (
+                <div>
+                  <FeatureProducts data={watches[0]} />
+                  <FeatureProducts data={watches[1]} />
+                  <FeatureProducts data={watches[2]} />
                 </div>
-              </div>
-              <div class="pricing-entry d-flex ftco-animate">
-                <div
-                  class="img order-md-last"
-                  style={{
-                    backgroundImage: "url(assests/img/gallery1.jpg)",
-                  }}
-                ></div>
-                <div class="desc pr-3 text-md-right">
-                  <div class="d-md-flex text align-items-center">
-                    <h3 class="order-md-last heading-left">
-                      <span>Pearl Neckles</span>
-                    </h3>
-                    <span class="price price-left">$29.00</span>
-                  </div>
-                  <div class="d-block desc__text">
-                    <p>
-                      Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                      Ratione, praesentium!
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div class="pricing-entry d-flex ftco-animate">
-                <div
-                  class="img order-md-last"
-                  style={{
-                    backgroundImage: "url(assests/img/gallery1.jpg)",
-                  }}
-                ></div>
-                <div class="desc pr-3 text-md-right">
-                  <div class="d-md-flex text align-items-center">
-                    <h3 class="order-md-last heading-left">
-                      <span>Pearl Neckles</span>
-                    </h3>
-                    <span class="price price-left">$20.00</span>
-                  </div>
-                  <div class="d-block desc__text">
-                    <p>
-                      Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                      Ratione, praesentium!
-                    </p>
-                  </div>
-                </div>
-              </div>
+              )}
+
             </div>
 
             <div class="col-md-6">
-              <div class="pricing-entry d-flex ftco-animate">
-                <div
-                  class="img"
-                  style={{
-                    backgroundImage: "url(assests/img/gallery1.jpg)",
-                  }}
-                ></div>
-                <div class="desc pl-3">
-                  <div class="d-md-flex text align-items-center">
-                    <h3>
-                      <span>Pearl Neckles</span>
-                    </h3>
-                    <span class="price">$20.00</span>
-                  </div>
-                  <div class="d-block desc__text">
-                    <p>
-                      Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                      Ratione, praesentium!
-                    </p>
-                  </div>
+              {watches.length === 0 ? (
+                ""
+              ) : (
+                <div>
+                  <FeatureProducts data={watches[0]} />
+                  <FeatureProducts data={watches[1]} />
+                  <FeatureProducts data={watches[2]} />
                 </div>
-              </div>
-              <div class="pricing-entry d-flex ftco-animate">
-                <div
-                  class="img"
-                  style={{
-                    backgroundImage: "url(assests/img/gallery1.jpg)",
-                  }}
-                ></div>
-                <div class="desc pl-3">
-                  <div class="d-md-flex text align-items-center">
-                    <h3>
-                      <span>Pearl Neckles</span>
-                    </h3>
-                    <span class="price">$20.00</span>
-                  </div>
-                  <div class="d-block desc__text">
-                    <p>
-                      Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                      Ratione, praesentium!
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div class="pricing-entry d-flex ftco-animate">
-                <div
-                  class="img"
-                  style={{
-                    backgroundImage: "url(assests/img/gallery1.jpg)",
-                  }}
-                ></div>
-                <div class="desc pl-3">
-                  <div class="d-md-flex text align-items-center">
-                    <h3>
-                      <span>Pearl Neckles</span>
-                    </h3>
-                    <span class="price">$20.00</span>
-                  </div>
-                  <div class="d-block desc__text">
-                    <p>
-                      Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                      Ratione, praesentium!
-                    </p>
-                  </div>
-                </div>
-              </div>
+              )}
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
       {/* <!-- END FEATURED PRODUCTS -->
 
 	<!-- HAVE A Question?  --> */}
@@ -809,203 +352,12 @@ function Home(props) {
       {/* <!-- END HAVE A Question? -->
 
 	<!-- TESTIMONIAL  --> */}
-      <section id="testimonial" class="ftco-section testimony-section bg-light">
-        <div class="container">
-          <div class="row justify-content-center mb-5 pb-3">
-            <div class="col-md-7 heading-section text-center ftco-animate">
-              <span class="subheading">Testimony</span>
-              <h2 class="mb-4">What people are saying !</h2>
-            </div>
-          </div>
-          <div class="row justify-content-center">
-            <div class="col-md-8 ftco-animate">
-              <div class="row ftco-animate">
-                <div class="col-md-12">
-                  <div class="carousel-testimony owl-carousel ftco-owl">
-                    <div class="item">
-                      <div class="testimony-wrap py-4 pb-5">
-                        <div
-                          class="user-img mb-4"
-                          style={{
-                            backgroundImage: "url(assests/img/person_1.jpg)",
-                          }}
-                        ></div>
-                        <div class="text text-center">
-                          <p class="name">John Ake</p>
-                          <span class="position">Custumer</span>
-                          <p class="star">
-                            <span class="ion-ios-star"></span>
-                            <span class="ion-ios-star"></span>
-                            <span class="ion-ios-star"></span>
-                            <span class="ion-ios-star"></span>
-                            <span class="ion-ios-star"></span>
-                          </p>
-                          <p class="mb-4">
-                            Lorem ipsum dolor sit amet consectetur adipisicing
-                            elit. Pariatur ad, voluptatum ex praesentium
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="item">
-                      <div class="testimony-wrap py-4 pb-5">
-                        <div
-                          class="user-img mb-4"
-                          style={{
-                            backgroundImage: "url(assests/img/person_2.jpg)",
-                          }}
-                        ></div>
-                        <div class="text text-center">
-                          <p class="name">John Ake</p>
-                          <span class="position">Custumer</span>
-                          <p class="star">
-                            <span class="ion-ios-star"></span>
-                            <span class="ion-ios-star"></span>
-                            <span class="ion-ios-star"></span>
-                            <span class="ion-ios-star"></span>
-                            <span class="ion-ios-star"></span>
-                          </p>
-                          <p class="mb-4">
-                            Lorem ipsum dolor sit amet, consectetur adipisicing
-                            elit. Voluptas autem nemo nam, officia maiores culpa
-                            odio fugiat explicabo ipsam cupiditate doloribus
-                            quaerat, aliquam impedit mollitia.
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="item">
-                      <div class="testimony-wrap py-4 pb-5">
-                        <div
-                          class="user-img mb-4"
-                          style={{
-                            backgroundImage: "url(assests/img/person_3.jpg)",
-                          }}
-                        ></div>
-                        <div class="text text-center">
-                          <p class="name">John Ake</p>
-                          <span class="position">Custumer</span>
-                          <p class="star">
-                            <span class="ion-ios-star"></span>
-                            <span class="ion-ios-star"></span>
-                            <span class="ion-ios-star"></span>
-                            <span class="ion-ios-star"></span>
-                            <span class="ion-ios-star"></span>
-                          </p>
-                          <p class="mb-4">
-                            Lorem ipsum dolor sit amet consectetur adipisicing
-                            elit. Repellendus ad doloribus quae a.
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="item">
-                      <div class="testimony-wrap py-4 pb-5">
-                        <div
-                          class="user-img mb-4"
-                          style={{
-                            backgroundImage: "url(assests/img/person_4.jpg)",
-                          }}
-                        ></div>
-                        <div class="text text-center">
-                          <p class="name">John Ake</p>
-                          <span class="position">Custumer</span>
-                          <p class="star">
-                            <span class="ion-ios-star"></span>
-                            <span class="ion-ios-star"></span>
-                            <span class="ion-ios-star"></span>
-                            <span class="ion-ios-star"></span>
-                            <span class="ion-ios-star"></span>
-                          </p>
-                          <p class="mb-4">
-                            Lorem ipsum dolor sit amet consectetur adipisicing
-                            elit. Aut iste a, quae suscipit nostrum debitis
-                            numquam quisquam saepe
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+
       {/* <!-- END TESTIMONIAL -->
 
 	<!-- INSTAGRAM IMAGES  --> */}
-      <section class="instagram">
-        <div class="container-fluid">
-          <div class="row no-gutters justify-content-center pb-5">
-            <div class="col-md-7 text-center heading-section ftco-animate">
-              <span class="subheading">Photos</span>
-              <h2>
-                <span>Images</span>
-              </h2>
-            </div>
-          </div>
-          <div class="row no-gutters">
-            <div class="col-sm-12 col-md ftco-animate">
-              <a
-                href="assests/img/new1.jpeg"
-                class="insta-img image-popup"
-                style={{ backgroundImage: "url(assests/img/new1.jpeg)" }}
-              >
-                <div class="icon d-flex justify-content-center">
-                  <span class="icon-zoom_in align-self-center"></span>
-                </div>
-              </a>
-            </div>
-            <div class="col-sm-12 col-md ftco-animate">
-              <a
-                href="assests/img/new2.jpeg"
-                class="insta-img image-popup"
-                style={{ backgroundImage: "url(assests/img/new2.jpeg)" }}
-              >
-                <div class="icon d-flex justify-content-center">
-                  <span class="icon-zoom_in align-self-center"></span>
-                </div>
-              </a>
-            </div>
-            <div class="col-sm-12 col-md ftco-animate">
-              <a
-                href="assests/img/new3.jpeg"
-                class="insta-img image-popup"
-                style={{ backgroundImage: "url(assests/img/new3.jpeg)" }}
-              >
-                <div class="icon d-flex justify-content-center">
-                  <span class="icon-zoom_in align-self-center"></span>
-                </div>
-              </a>
-            </div>
-            <div class="col-sm-12 col-md ftco-animate">
-              <a
-                href="assests/img/new4.jpeg"
-                class="insta-img image-popup"
-                style={{ backgroundImage: "url(assests/img/new4.jpeg)" }}
-              >
-                <div class="icon d-flex justify-content-center">
-                  <span class="icon-zoom_in align-self-center"></span>
-                </div>
-              </a>
-            </div>
-            <div class="col-sm-12 col-md ftco-animate">
-              <a
-                href="assests/img/new5.jpeg"
-                class="insta-img image-popup"
-                style={{ backgroundImage: " url(assests/img/new5.jpeg)" }}
-              >
-                <div class="icon d-flex justify-content-center">
-                  <span class="icon-zoom_in align-self-center"></span>
-                </div>
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
-      {/* <!-- end INSTAGRAM IMAGES  --> */}
 
+      {/* <!-- end INSTAGRAM IMAGES  --> */}
       <footer class="ftco-footer ftco-bg-dark ftco-section">
         <div class="container">
           <div class="row mb-5">
@@ -1094,11 +446,9 @@ function Home(props) {
           </div>
         </div>
       </footer>
-
       <a href="#top" id="back-to-top">
         <i class="icon-long-arrow-up"></i>
       </a>
-
       {/* <!-- loader --> */}
       <div id="ftco-loader" class="show fullscreen">
         <svg class="circular" width="48px" height="48px">
